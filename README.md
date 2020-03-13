@@ -1,6 +1,6 @@
 # middleware_kafka
 
-##Processing pipeline in Kafka
+## Processing pipeline in Kafka
 
 Implement a data processing pipeline in Kafka.
 
