@@ -4,7 +4,7 @@
 
 Implement a data processing pipeline in Kafka.
 
-###Requirements
+### Requirements
 
 <ul>
     <li>Provide administrative tools / scripts to create and deploy a processing pipeline that 
@@ -24,7 +24,7 @@ Implement a data processing pipeline in Kafka.
         delivery semantics.</li>
 </ul>
 
-###Assumptions
+### Assumptions
 
 <ul>
     <li>Processes can fail.</li>
