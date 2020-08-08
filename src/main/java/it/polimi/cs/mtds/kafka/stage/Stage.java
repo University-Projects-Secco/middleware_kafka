@@ -40,13 +40,13 @@ public class Stage implements Runnable{
 		try {
 			consumer.subscribe(inputTopics);
 			while ( running ) {
-				//DO STUFF
 				final ConsumerRecords<String,String> records = consumer.poll(Duration.of(5, ChronoUnit.MINUTES).toMillis());
 				for ( final ConsumerRecord<String, String> record: records ){
 					final String key = record.key();
 					final String result  = function.apply(record.value());
 					final ProducerRecord<String,String> resultRecord = new ProducerRecord<>(outputTopic,key,result); //OPT: specify partition?
 					final Future<RecordMetadata> future = producer.send(resultRecord);
+					//OPT: do something with this future?
 				}
 			}
 		}finally {
