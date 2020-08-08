@@ -1,10 +1,10 @@
 # middleware_kafka
 
-##Processing pipeline in Kafka
+## Processing pipeline in Kafka
 
 Implement a data processing pipeline in Kafka.
 
-###Requirements
+### Requirements
 
 <ul>
     <li>Provide administrative tools / scripts to create and deploy a processing pipeline that 
@@ -24,7 +24,7 @@ Implement a data processing pipeline in Kafka.
         delivery semantics.</li>
 </ul>
 
-###Assumptions
+### Assumptions
 
 <ul>
     <li>Processes can fail.</li>
@@ -40,7 +40,7 @@ Implement a data processing pipeline in Kafka.
 </ul>
 
 
-###TODO
+### TODO
 <ul>
     <li>Main: use property file to start different stages running different functions</li>
     <li>Kafka properties for producers and consumers</li>
