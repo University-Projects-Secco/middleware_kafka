@@ -7,6 +7,9 @@ import java.util.function.Function;
 
 public class ExampleExternalFunction implements Function<String, String> {
 
+	/**
+	 * Return a string consisting in the same characters of the input string, shuffled
+	 */
 	@Override
 	public String apply(String s) {
 		final char[] charsA = s.toCharArray();

@@ -7,7 +7,7 @@ public final class FunctionFactory {
 	/**
 	 * Builds the predefined functions. Lambda can be replaced with custom functional interfaces ({@link ExampleExternalFunction})
 	 * @param name an identifier for the function
-	 * @return
+	 * @return a predefined function identified by that name
 	 */
 	public static Function<String,String> getFunction(String name){
 		switch ( name.toLowerCase() ){
