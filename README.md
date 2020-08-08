@@ -38,3 +38,12 @@ Implement a data processing pipeline in Kafka.
     <li>You can assume a set of predefined functions to implement stages, and you can refer to 
         them by name in the scripts that create and deploy a processing pipeline.</li>
 </ul>
+
+
+###TODO
+<ul>
+    <li>Main: use property file to start different stages running different functions</li>
+    <li>Kafka properties for producers and consumers</li>
+    <li>Ensure exactly once delivery</li>
+    <li>Handle process fault</li>
+</ul>
