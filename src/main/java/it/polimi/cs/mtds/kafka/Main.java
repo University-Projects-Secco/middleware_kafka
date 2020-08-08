@@ -15,6 +15,15 @@ public class Main {
 
 	private static final List<Thread> stages = new LinkedList<>();
 
+	/**
+	 * Open config.properties
+	 * Read the list of stages and function executed at each stage from properties
+	 * Start a new thread for each stage ({@link Stage})
+	 * Join all stages
+	 *
+	 * @throws IOException if fails to open config.properties
+	 * @throws InterruptedException if fails joining created stages
+	 */
 	public static void main(String[] args) throws IOException, InterruptedException {
 		try {
 			Properties processProperties = new Properties();
@@ -37,6 +46,7 @@ public class Main {
 			throw new IOException("Cannot read property file",e);
 		}finally {
 			for ( Thread stage : stages ) stage.join();
+			System.out.println("All stages closed");
 		}
 	}
 }

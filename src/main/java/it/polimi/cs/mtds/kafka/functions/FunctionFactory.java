@@ -3,6 +3,12 @@ package it.polimi.cs.mtds.kafka.functions;
 import java.util.function.Function;
 
 public final class FunctionFactory {
+
+	/**
+	 * Builds the predefined functions. Lambda can be replaced with custom functional interfaces ({@link ExampleExternalFunction})
+	 * @param name an identifier for the function
+	 * @return
+	 */
 	public static Function<String,String> getFunction(String name){
 		switch ( name.toLowerCase() ){
 			case "int:increment":
@@ -18,6 +24,8 @@ public final class FunctionFactory {
 					System.out.println(s);
 					return s;
 				};
+			case "string:shuffle":
+				return new ExampleExternalFunction();
 			default:
 				return Function.identity();
 		}
