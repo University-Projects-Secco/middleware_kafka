@@ -42,7 +42,12 @@ Implement a data processing pipeline in Kafka.
 
 ### TODO
 <ul>
+    
+</ul>
+
+### TOTEST
+<ul>
     <li>Kafka properties for producers and consumers</li>
-    <li>Ensure exactly once delivery</li>
-    <li>Handle process fault</li>
+    <li>Exactly once delivery</li>
+    <li>Process fault</li>
 </ul>
