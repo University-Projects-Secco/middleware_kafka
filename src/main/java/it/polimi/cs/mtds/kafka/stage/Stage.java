@@ -9,21 +9,23 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.TopicPartition;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.Duration;
 import java.util.*;
 import java.util.function.Function;
 
 public class Stage<K,V> implements Runnable{
 	private static final String TOPIC_PREFIX = "topic_";
-	final Function<V,V> function;
-	final int stageNumber;
-	final KafkaConsumer<K, V> consumer;
+	private static final String CONSUMER_GROUP_PREFIX = "consumer-";
+	private static final String PRODUCER_GROUP_PREFIX = "producer-";
+
+	private final Function<V,V> function;
+	private final KafkaConsumer<K, V> consumer;
 	final KafkaProducer<K, V> producer;
-	final Collection<String> inputTopics;
-	final String outputTopic;
-	static final String CONSUMER_GROUP_PREFIX = "consumer-";
-	static final String PRODUCER_GROUP_PREFIX = "producer-";
 	private volatile boolean running;
+	private final String upstreamConsumerGroupId;
+	final String outputTopic;
 
 	public Stage(final String functionName, final Class<V> vClass, final int stageNum) throws IOException {
 		//Configure consumer
@@ -39,13 +41,12 @@ public class Stage<K,V> implements Runnable{
 		producerProperties.put("transactional.id",PRODUCER_GROUP_PREFIX+(stageNum+1));
 
 		this.function = AbstractFunctionFactory.getInstance(vClass).getFunction(functionName);
-		this.stageNumber = stageNum;
-		this.inputTopics = Collections.singleton(TOPIC_PREFIX+stageNum);
+		this.upstreamConsumerGroupId = CONSUMER_GROUP_PREFIX + (stageNum + 1);
 		this.outputTopic = TOPIC_PREFIX+(stageNum+1);
 		this.consumer = new KafkaConsumer<>(consumerProperties);
 		this.producer = new KafkaProducer<>(producerProperties);
 		producer.initTransactions();
-		consumer.subscribe(inputTopics);
+		consumer.subscribe(Collections.singleton(TOPIC_PREFIX+stageNum));
 		this.running = true;
 	}
 
@@ -58,7 +59,7 @@ public class Stage<K,V> implements Runnable{
 
 				try {
 					//Get some messages from the previous stage
-					final ConsumerRecords<K, V> records = consumer.poll(Duration.ofMinutes(5).toMillis());
+					final ConsumerRecords<K, V> records = consumer.poll(Duration.ofMinutes(1));
 
 					//Apply the stage function to the messages and send the results
 					this.executeFunctionAndSendResult(records);
@@ -103,7 +104,7 @@ public class Stage<K,V> implements Runnable{
 		});
 
 		//add offsets to transaction
-		producer.sendOffsetsToTransaction(offsets, CONSUMER_GROUP_PREFIX + (stageNumber + 1)); //Consumers of the next stage
+		producer.sendOffsetsToTransaction(offsets, upstreamConsumerGroupId); //Consumers of the next stage
 	}
 
 	public void shutdown(){
