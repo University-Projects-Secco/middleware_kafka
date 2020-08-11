@@ -26,11 +26,11 @@ public class Main {
 
 		//Prepare properties
 		final Properties processProperties = new Properties();
-		final InputStream propertiesIn = Main.class.getClassLoader().getResourceAsStream("config.properties");
+		final String propertiesName = args.length>0?args[0]:"config.properties";
+		final InputStream propertiesIn = Main.class.getClassLoader().getResourceAsStream(propertiesName);
 		try {
 			processProperties.load(propertiesIn);
 		}catch ( IOException e ){ throw new IOException("Cannot read property file",e); }
-		final String bootstrapServers = processProperties.getProperty(Stage.BOOTSTRAP_SERVERS);
 
 		//Read list of stages on this process
 		final Integer[] stages = Arrays.stream(processProperties.getProperty("stages").split(","))
@@ -44,7 +44,7 @@ public class Main {
 
 		//Start the stages
 		for(int i=0; i<functions.length; i++){
-			final Stage<Integer,String> stage = new Stage<>(functions[i],String.class,stages[i],bootstrapServers);
+			final Stage<Integer,String> stage = new Stage<>(functions[i],String.class,stages[i]);
 			final Thread stageThread = new Thread(stage,"Stage "+i);
 			Main.stageThreads.add(stageThread);
 			Main.stages.add(stage);
