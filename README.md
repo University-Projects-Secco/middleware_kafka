@@ -42,12 +42,15 @@ Implement a data processing pipeline in Kafka.
 
 ### TODO
 <ul>
-    
+    <li>Stage replication for load balancing</li>
 </ul>
 
 ### TOTEST
 <ul>
-    <li>Kafka properties for producers and consumers</li>
-    <li>Exactly once delivery</li>
-    <li>Process fault</li>
+    <li>More stages on 1 process</li>
+</ul>
+
+### OPTIONALS
+<ul>
+    <li>More parametrization on types</li>
 </ul>
