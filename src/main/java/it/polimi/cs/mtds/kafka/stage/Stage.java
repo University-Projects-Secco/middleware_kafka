@@ -14,7 +14,6 @@ import java.util.*;
 import java.util.function.Function;
 
 public class Stage<K,V> implements Runnable{
-	public static final String BOOTSTRAP_SERVERS = "bootstrap.servers";
 	private static final String TOPIC_PREFIX = "topic_";
 	final Function<V,V> function;
 	final int stageNumber;
@@ -26,19 +25,18 @@ public class Stage<K,V> implements Runnable{
 	static final String PRODUCER_GROUP_PREFIX = "producer-";
 	private volatile boolean running;
 
-	public Stage(String functionName, Class<V> vClass, int stageNum, String bootstrapServers){
+	public Stage(final String functionName, final Class<V> vClass, final int stageNum) throws IOException {
 		//Configure consumer
-		Properties consumerProperties = new Properties();
+		final Properties consumerProperties = new Properties();
+		final InputStream consumerPropIn = Stage.class.getClassLoader().getResourceAsStream("consumer.properties");
+		consumerProperties.load(consumerPropIn);
 		consumerProperties.put("group.id",CONSUMER_GROUP_PREFIX+stageNum);
-		consumerProperties.put(BOOTSTRAP_SERVERS,bootstrapServers);
-		consumerProperties.put("enable.auto.commit","false");
-		consumerProperties.put("isolation.level","read_committed");
 
 		//Configure producer
-		Properties producerProperties = new Properties();
+		final Properties producerProperties = new Properties();
+		final InputStream producerPropIn = Stage.class.getClassLoader().getResourceAsStream("producer.properties");
+		producerProperties.load(producerPropIn);
 		producerProperties.put("transactional.id",PRODUCER_GROUP_PREFIX+(stageNum+1));
-		producerProperties.put(BOOTSTRAP_SERVERS,bootstrapServers);
-		producerProperties.put("enable.idempotence","true");
 
 		this.function = AbstractFunctionFactory.getInstance(vClass).getFunction(functionName);
 		this.stageNumber = stageNum;
