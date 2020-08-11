@@ -67,6 +67,7 @@ public class Stage<K,V> implements Runnable{
 					//Update the offsets for each partition
 					this.updateOffsets(records);
 
+					consumer.commitSync();
 					producer.commitTransaction();
 				}catch ( Exception e ){
 					e.printStackTrace();
