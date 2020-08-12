@@ -42,12 +42,14 @@ Implement a data processing pipeline in Kafka.
 
 ### TODO
 <ul>
-    <li>Statefullness</li>
+    
 </ul>
 
 ### TOTEST
 <ul>
     <li>More stages on 1 process</li>
+    <li>State saving to topics</li>
+    <li>State recovery</li>
 </ul>
 
 ### OPTIONALS
