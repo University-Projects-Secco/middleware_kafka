@@ -1,5 +1,7 @@
 package it.polimi.cs.mtds.kafka;
 
+import it.polimi.cs.mtds.kafka.functions.FunctionFactory;
+import it.polimi.cs.mtds.kafka.functions.StringFunctionFactory;
 import it.polimi.cs.mtds.kafka.stage.Stage;
 
 import java.io.IOException;
@@ -12,7 +14,7 @@ import java.util.Properties;
 public class Main {
 
 	private static final List<Thread> stageThreads = new LinkedList<>();
-	private static final List<Stage<Integer,String>> stages = new LinkedList<>();
+	private static final List<Stage<Integer,String,Integer>> stages = new LinkedList<>();
 
 	/**
 	 * Open config.properties
@@ -28,6 +30,7 @@ public class Main {
 		final Properties processProperties = new Properties();
 		final String propertiesName = args.length>0?args[0]:"config.properties";
 		final InputStream propertiesIn = Main.class.getClassLoader().getResourceAsStream(propertiesName);
+		final FunctionFactory<String,Integer,String> functionFactory = new StringFunctionFactory();
 		try {
 			processProperties.load(propertiesIn);
 		}catch ( IOException e ){ throw new IOException("Cannot read property file",e); }
@@ -44,7 +47,7 @@ public class Main {
 
 		//Start the stages
 		for(int i=0; i<functions.length; i++){
-			final Stage<Integer,String> stage = new Stage<>(functions[i],String.class,stages[i]);
+			final Stage<Integer,String, Integer> stage = new Stage<>(functionFactory.getFunction(functions[i]),0,stages[i]);
 			final Thread stageThread = new Thread(stage,"Stage "+i);
 			Main.stageThreads.add(stageThread);
 			Main.stages.add(stage);

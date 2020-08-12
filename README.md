@@ -42,8 +42,7 @@ Implement a data processing pipeline in Kafka.
 
 ### TODO
 <ul>
-    <li>Stage replication for load balancing</li>
-    <li>Grand FIFO even with key partitioning because of stage replication</li>
+    <li>Statefullness</li>
 </ul>
 
 ### TOTEST
