@@ -14,7 +14,7 @@ import java.util.Properties;
 public class Main {
 
 	private static final List<Thread> stageThreads = new LinkedList<>();
-	private static final List<Stage<Integer,String,Integer>> stages = new LinkedList<>();
+	private static final List<Stage<Integer,String,Integer, String>> stages = new LinkedList<>();
 
 	/**
 	 * Open config.properties
@@ -47,7 +47,7 @@ public class Main {
 
 		//Start the stages
 		for(int i=0; i<functions.length; i++){
-			final Stage<Integer,String, Integer> stage = new Stage<>(functionFactory.getFunction(functions[i]),0,stages[i]);
+			final Stage<Integer, String, Integer, String> stage = new Stage<>(functionFactory.getFunction(functions[i]),0,stages[i]);
 			final Thread stageThread = new Thread(stage,"Stage "+i);
 			Main.stageThreads.add(stageThread);
 			Main.stages.add(stage);
