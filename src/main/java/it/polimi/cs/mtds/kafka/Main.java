@@ -39,11 +39,15 @@ public class Main {
 		final Integer[] stages = Arrays.stream(processProperties.getProperty("stages").split(","))
 				.map(Integer::parseInt).toArray(Integer[]::new);
 
+		//Read replica ids on this process
+		final Integer[] ids = Arrays.stream(processProperties.getProperty("ids").split(","))
+				.map(Integer::parseInt).toArray(Integer[]::new);
+
 		//Read function names for each stage
 		final String[] functions = processProperties.getProperty("functions").split(",");
 
 		//Safety check
-		if(stages.length!=functions.length) throw new IllegalStateException("Invalid property file: the same number of stages and functions is required");
+		if(stages.length!=functions.length || stages.length!=ids.length) throw new IllegalStateException("Invalid property file: the same number of stages and functions is required");
 
 		//Start the stages
 		for(int i=0; i<functions.length; i++){
