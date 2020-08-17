@@ -14,7 +14,7 @@ import java.util.Properties;
 public class Main {
 
 	private static final List<Thread> stageThreads = new LinkedList<>();
-	private static final List<Stage<Integer,String,Integer, String>> stages = new LinkedList<>();
+	private static final List<Stage<String,String,String, String>> stages = new LinkedList<>();
 
 	/**
 	 * Open config.properties
@@ -30,7 +30,7 @@ public class Main {
 		final Properties processProperties = new Properties();
 		final String propertiesName = args.length>0?args[0]:"config.properties";
 		final InputStream propertiesIn = Main.class.getClassLoader().getResourceAsStream(propertiesName);
-		final FunctionFactory<String,Integer,String> functionFactory = new StringFunctionFactory();
+		final FunctionFactory<String,String,String> functionFactory = new StringFunctionFactory();
 		try {
 			processProperties.load(propertiesIn);
 		}catch ( IOException e ){ throw new IOException("Cannot read property file",e); }
@@ -47,7 +47,7 @@ public class Main {
 
 		//Start the stages
 		for(int i=0; i<functions.length; i++){
-			final Stage<Integer, String, Integer, String> stage = new Stage<>(functionFactory.getFunction(functions[i]),0,stages[i]);
+			final Stage<String, String, String, String> stage = new Stage<>(functionFactory.getFunction(functions[i]), "0", stages[i], ids[i]);
 			final Thread stageThread = new Thread(stage,"Stage "+i);
 			Main.stageThreads.add(stageThread);
 			Main.stages.add(stage);
