@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 
-public class InitialProducer {
+public class Feeder {
 
 	public static void main(String[] args) throws IOException {
 		final Properties properties = new Properties();

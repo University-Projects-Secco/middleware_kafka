@@ -42,7 +42,6 @@ Implement a data processing pipeline in Kafka.
 
 ### TODO
 <ul>
-    <li>Make state saving/recovery work</li>
     <li>Script generator for topic creation and configuration</li>
 </ul>
 

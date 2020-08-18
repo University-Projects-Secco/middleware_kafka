@@ -11,7 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
-public class Main {
+public class PipelineRunner {
 
 	private static final List<Thread> stageThreads = new LinkedList<>();
 	private static final List<Stage<String,String,String, String>> stages = new LinkedList<>();
@@ -29,7 +29,7 @@ public class Main {
 		//Prepare properties
 		final Properties processProperties = new Properties();
 		final String propertiesName = args.length>0?args[0]:"config.properties";
-		final InputStream propertiesIn = Main.class.getClassLoader().getResourceAsStream(propertiesName);
+		final InputStream propertiesIn = PipelineRunner.class.getClassLoader().getResourceAsStream(propertiesName);
 		final FunctionFactory<String,String,String> functionFactory = new StringFunctionFactory();
 		try {
 			processProperties.load(propertiesIn);
@@ -53,15 +53,15 @@ public class Main {
 		for(int i=0; i<functions.length; i++){
 			final Stage<String, String, String, String> stage = new Stage<>(functionFactory.getFunction(functions[i]), "0", stages[i], ids[i]);
 			final Thread stageThread = new Thread(stage,"Stage "+i);
-			Main.stageThreads.add(stageThread);
-			Main.stages.add(stage);
+			PipelineRunner.stageThreads.add(stageThread);
+			PipelineRunner.stages.add(stage);
 			stageThread.start();
 		}
 
 		//Handle SIGINT
 		Runtime.getRuntime().addShutdownHook(new Thread(()->{
-			Main.stages.forEach(Stage::shutdown);
-			for ( Thread thread : Main.stageThreads )
+			PipelineRunner.stages.forEach(Stage::shutdown);
+			for ( Thread thread : PipelineRunner.stageThreads )
 				try { thread.join(); } catch ( InterruptedException e ) {
 					e.printStackTrace();
 					System.err.println("ShutdownHook interrupted?");
