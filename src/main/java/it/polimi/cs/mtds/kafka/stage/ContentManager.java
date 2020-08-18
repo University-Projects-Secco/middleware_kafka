@@ -22,11 +22,13 @@ class ContentManager<Key,Input, State, Output> extends KafkaClient<Key,Input,Sta
 	public static <Key, Input, State, Output> ContentManager<Key,Input,State,Output> build(final BiFunction<Input, AtomicReference<State>, Output> function,
 	                                                                                       final AtomicReference<State> stateRef,
 	                                                                                       final int stageNum) throws IOException{
+		final String consumerGroupId = CONSUMER_GROUP_PREFIX+stageNum;
+
 		//Configure consumer
 		final Properties consumerProperties = new Properties();
 		final InputStream consumerPropIn = Stage.class.getClassLoader().getResourceAsStream("consumer.properties");
 		consumerProperties.load(consumerPropIn);
-		consumerProperties.put(GROUP_ID,CONSUMER_GROUP_PREFIX+stageNum);
+		consumerProperties.put(GROUP_ID,consumerGroupId);
 
 		//Configure producer
 		final Properties producerProperties = new Properties();
@@ -34,18 +36,16 @@ class ContentManager<Key,Input, State, Output> extends KafkaClient<Key,Input,Sta
 		producerProperties.load(producerPropIn);
 		producerProperties.put(TRANSACTIONAL_ID,PRODUCER_GROUP_PREFIX+(stageNum+1));
 
-		final String upstreamConsumerGroupId = CONSUMER_GROUP_PREFIX + (stageNum+1);
-
-		return new ContentManager<>(function,stateRef,stageNum,upstreamConsumerGroupId,new KafkaConsumer<>(consumerProperties),new KafkaProducer<>(producerProperties));
+		return new ContentManager<>(function,stateRef,stageNum, consumerGroupId, new KafkaConsumer<>(consumerProperties),new KafkaProducer<>(producerProperties));
 	}
 
 	private ContentManager(final BiFunction<Input, AtomicReference<State>, Output> function,
 	                       final AtomicReference<State> stateRef,
 	                       final int stageNum,
-	                       final String upstreamConsumerGroupId,
+	                       final String consumerGroupId,
 	                       final KafkaConsumer<Key,Input> consumer,
 	                       final KafkaProducer<Key,Output> producer) {
-		super(consumer,producer, stateRef, upstreamConsumerGroupId);
+		super(consumer,producer, stateRef, consumerGroupId);
 
 		//Initialize trivial attributes
 		this.function = function;
@@ -77,7 +77,6 @@ class ContentManager<Key,Input, State, Output> extends KafkaClient<Key,Input,Sta
 			updateOffsets(records);
 		}
 
-		consumer.commitSync();
 		producer.commitTransaction();
 	}
 
