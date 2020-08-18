@@ -13,8 +13,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.StreamSupport;
 
 import static it.polimi.cs.mtds.kafka.constants.Constants.*;
-import static org.apache.kafka.common.protocol.CommonFields.GROUP_ID;
-import static org.apache.kafka.common.protocol.CommonFields.TRANSACTIONAL_ID;
 
 class StateManager<State> extends KafkaClient<String,State,State,State> {
 
@@ -32,13 +30,13 @@ class StateManager<State> extends KafkaClient<String,State,State,State> {
 		final Properties consumerProperties = new Properties();
 		final InputStream consumerPropIn = Stage.class.getClassLoader().getResourceAsStream("state_consumer.properties");
 		consumerProperties.load(consumerPropIn);
-		consumerProperties.put(GROUP_ID.name, consumerGroupId);
+		consumerProperties.put(GROUP_ID, consumerGroupId);
 
 		//Configure producer
 		final Properties producerProperties = new Properties();
 		final InputStream producerPropIn = Stage.class.getClassLoader().getResourceAsStream("state_producer.properties");
 		producerProperties.load(producerPropIn);
-		producerProperties.put(TRANSACTIONAL_ID.name,producerTransactionalId);
+		producerProperties.put(TRANSACTIONAL_ID,producerTransactionalId);
 
 		return new StateManager<>(stateRef, replicaId, consumerGroupId, new KafkaConsumer<>(consumerProperties), new KafkaProducer<>(producerProperties));
 	}

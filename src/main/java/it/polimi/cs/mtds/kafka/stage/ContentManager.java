@@ -13,8 +13,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 
 import static it.polimi.cs.mtds.kafka.constants.Constants.*;
-import static org.apache.kafka.common.protocol.CommonFields.GROUP_ID;
-import static org.apache.kafka.common.protocol.CommonFields.TRANSACTIONAL_ID;
 
 class ContentManager<Key,Input, State, Output> extends KafkaClient<Key,Input,State,Output> {
 
@@ -28,13 +26,13 @@ class ContentManager<Key,Input, State, Output> extends KafkaClient<Key,Input,Sta
 		final Properties consumerProperties = new Properties();
 		final InputStream consumerPropIn = Stage.class.getClassLoader().getResourceAsStream("consumer.properties");
 		consumerProperties.load(consumerPropIn);
-		consumerProperties.put(GROUP_ID.name,CONSUMER_GROUP_PREFIX+stageNum);
+		consumerProperties.put(GROUP_ID,CONSUMER_GROUP_PREFIX+stageNum);
 
 		//Configure producer
 		final Properties producerProperties = new Properties();
 		final InputStream producerPropIn = Stage.class.getClassLoader().getResourceAsStream("producer.properties");
 		producerProperties.load(producerPropIn);
-		producerProperties.put(TRANSACTIONAL_ID.name,PRODUCER_GROUP_PREFIX+(stageNum+1));
+		producerProperties.put(TRANSACTIONAL_ID,PRODUCER_GROUP_PREFIX+(stageNum+1));
 
 		final String upstreamConsumerGroupId = CONSUMER_GROUP_PREFIX + (stageNum+1);
 
