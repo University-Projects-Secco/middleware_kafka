@@ -44,4 +44,8 @@ public abstract class KafkaClient<Key,Input,State,Output> implements Runnable, C
 		updateOffsets(records,offset->offset+1);
 	}
 
+	public void commit(){
+		producer.commitTransaction();
+	}
+
 }

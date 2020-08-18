@@ -4,11 +4,14 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.TopicPartition;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.StreamSupport;
 
@@ -38,25 +41,32 @@ class StateManager<State> extends KafkaClient<String,State,State,State> {
 		producerProperties.load(producerPropIn);
 		producerProperties.put(TRANSACTIONAL_ID,producerTransactionalId);
 
-		return new StateManager<>(stateRef, replicaId, consumerGroupId, new KafkaConsumer<>(consumerProperties), new KafkaProducer<>(producerProperties));
+		return new StateManager<>(stateRef,
+				replicaId,
+				consumerGroupId,
+				new KafkaConsumer<>(consumerProperties),
+				new KafkaProducer<>(producerProperties),
+				Long.parseLong(producerProperties.getProperty(TRANSACTION_TIMEOUT_MS)));
 	}
 
 	private StateManager(final AtomicReference<State> stateRef,
 	                     final String replicaId,
-	                     final String upstreamConsumerGroupId,
-	                     KafkaConsumer<String, State> consumer,
-	                     KafkaProducer<String, State> producer) {
-		super(consumer, producer, stateRef, upstreamConsumerGroupId);
+	                     final String consumerGroupId,
+	                     final KafkaConsumer<String, State> consumer,
+	                     final KafkaProducer<String, State> producer,
+	                     final long transaction_timeout_ms) {
+		super(consumer, producer, stateRef, consumerGroupId);
 
 		//Initialize trivial attributes and variables
 		this.replicaId = replicaId;
 
 		//initialize consumer
-		consumer.subscribe(Collections.singleton(STATE_GROUP_PREFIX));
+		final Collection<TopicPartition> statePartitions = Collections.singleton(new TopicPartition(STATE_TOPIC,0));
+		consumer.assign(statePartitions);
+		consumer.seekToBeginning(statePartitions);
 
 		//load pre-existing state, if any
-		//ConsumerRecords<String,State> states = stateConsumer.poll(Duration.ofMillis(Long.parseLong(stateWriterProperties.getProperty("transaction.timeout.ms"))+2000));
-		ConsumerRecords<String,State> states = consumer.poll(Duration.ofSeconds(2));
+		ConsumerRecords<String,State> states = consumer.poll(Duration.ofMillis(transaction_timeout_ms+2000));
 		StreamSupport.stream(states.spliterator(),false)
 				.filter(record->replicaId.equals(record.key()))
 				.forEach(record-> this.stateRef.set(record.value()));
@@ -69,17 +79,8 @@ class StateManager<State> extends KafkaClient<String,State,State,State> {
 	public void run() {
 		producer.beginTransaction();
 
-		final ProducerRecord<String,State> newStateRecord= new ProducerRecord<>(STATE_GROUP_PREFIX, this.replicaId, this.stateRef.get());
+		final ProducerRecord<String,State> newStateRecord= new ProducerRecord<>(STATE_TOPIC, this.replicaId, this.stateRef.get());
 		producer.send(newStateRecord);
-
-		consumer.seekToBeginning(consumer.assignment());
-
-//		final ConsumerRecords<String,State> records = consumer.poll(Duration.ofSeconds(5));
-//
-//		updateOffsets(records);
-
-		consumer.commitSync();
-		producer.commitTransaction();
 	}
 
 	@Override

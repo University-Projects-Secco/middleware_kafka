@@ -32,6 +32,8 @@ public class Stage<Key,Input, State, Output> implements Runnable{
 			while ( running ) {
 				contentManager.run();
 				stateManager.run();
+				contentManager.commit();
+				stateManager.commit();
 			}
 		}finally {
 			contentManager.close();

@@ -76,8 +76,6 @@ class ContentManager<Key,Input, State, Output> extends KafkaClient<Key,Input,Sta
 
 			updateOffsets(records);
 		}
-
-		producer.commitTransaction();
 	}
 
 	public void close(){
