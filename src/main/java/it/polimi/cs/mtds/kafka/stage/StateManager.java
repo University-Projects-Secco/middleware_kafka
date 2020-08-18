@@ -59,7 +59,6 @@ class StateManager<State> extends KafkaClient<String,State,State,State> {
 		ConsumerRecords<String,State> states = consumer.poll(Duration.ofSeconds(2));
 		StreamSupport.stream(states.spliterator(),false)
 				.filter(record->replicaId.equals(record.key()))
-				.peek(System.out::println)
 				.forEach(record-> this.stateRef.set(record.value()));
 
 		//initialize producer
@@ -73,12 +72,11 @@ class StateManager<State> extends KafkaClient<String,State,State,State> {
 		final ProducerRecord<String,State> newStateRecord= new ProducerRecord<>(STATE_GROUP_PREFIX, this.replicaId, this.stateRef.get());
 		producer.send(newStateRecord);
 
-		ConsumerRecords<String,State> records;
-		do{
-			records = consumer.poll(Duration.ofSeconds(5));
-		}while ( records.count()<1 );
+		consumer.seekToBeginning(consumer.assignment());
 
-		updateOffsets(records);
+//		final ConsumerRecords<String,State> records = consumer.poll(Duration.ofSeconds(5));
+//
+//		updateOffsets(records);
 
 		consumer.commitSync();
 		producer.commitTransaction();

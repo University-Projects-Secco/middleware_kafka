@@ -17,7 +17,7 @@ public abstract class KafkaClient<Key,Input,State,Output> implements Runnable, C
 	protected final KafkaConsumer<Key,Input> consumer;
 	protected final KafkaProducer<Key,Output> producer;
 	protected final AtomicReference<State> stateRef;
-	private final String upstreamConsumerGroupId;
+	private final String upstreamConsumerGroupId;   //TODO: wrong approach. reason more about how you update the offsets.
 
 	protected KafkaClient(KafkaConsumer<Key, Input> consumer, KafkaProducer<Key, Output> producer, AtomicReference<State> stateRef, String upstreamConsumerGroupId) {
 		this.consumer = consumer;

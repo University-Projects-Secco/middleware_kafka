@@ -16,12 +16,12 @@ Implement a data processing pipeline in Kafka.
         <ul>
             <li>Stages are stateful and their state is partitioned by key 
                 (where is the state stored?).</li>
-            <li>Each stage consists of multiple processes that handle messages with different 
-            keys in parallel.</li>
+            <li><s>Each stage consists of multiple processes that handle messages with different 
+            keys in parallel.</s></li>
         </ul>
     </li>
-    <li>Messages having the same key are processed in FIFO order with end-to-end exactly once
-        delivery semantics.</li>
+    <li><s>Messages having the same key are processed in FIFO order with end-to-end exactly once
+        delivery semantics.</s></li>
 </ul>
 
 ### Assumptions
@@ -42,14 +42,12 @@ Implement a data processing pipeline in Kafka.
 
 ### TODO
 <ul>
-    
+    <li>Make state saving/recovery work</li>
+    <li>Script generator for topic creation and configuration</li>
 </ul>
 
 ### TOTEST
 <ul>
-    <li>More stages on 1 process</li>
-    <li>State saving to topics</li>
-    <li>State recovery</li>
 </ul>
 
 ### OPTIONALS
