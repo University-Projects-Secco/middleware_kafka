@@ -32,6 +32,12 @@
                 <version>3.1.2</version>
                 <configuration>
                     <outputDirectory>../docker/${project.artifactId}</outputDirectory>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>libs/</classpathPrefix>
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
         </plugins>

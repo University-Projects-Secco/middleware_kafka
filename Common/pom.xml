@@ -11,17 +11,4 @@
 
     <artifactId>Common</artifactId>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.2</version>
-                <configuration>
-                    <outputDirectory>target</outputDirectory>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>
