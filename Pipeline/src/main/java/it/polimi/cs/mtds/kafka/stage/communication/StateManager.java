@@ -1,5 +1,6 @@
-package it.polimi.cs.mtds.kafka.stage;
+package it.polimi.cs.mtds.kafka.stage.communication;
 
+import it.polimi.cs.mtds.kafka.stage.Stage;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -17,7 +18,7 @@ import java.util.stream.StreamSupport;
 
 import static it.polimi.cs.mtds.kafka.constants.Constants.*;
 
-class StateManager<State> extends KafkaClient<String,State,State,State> {
+public class StateManager<State> extends KafkaClient<String,State,State,State> {
 
 	private final String replicaId;
 

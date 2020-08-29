@@ -28,7 +28,7 @@ public class PipelineRunner {
 
 		//Prepare properties
 		final Properties processProperties = new Properties();
-		final String propertiesName = args.length>0?args[0]:"config.properties";
+		final String propertiesName = args.length>0?args[0]: "config.properties";
 		final InputStream propertiesIn = PipelineRunner.class.getClassLoader().getResourceAsStream(propertiesName);
 		final FunctionFactory<String,String,String> functionFactory = new StringFunctionFactory();
 		try {
@@ -47,7 +47,7 @@ public class PipelineRunner {
 		final String[] functions = processProperties.getProperty("functions").split(",");
 
 		//Safety check
-		if(stages.length!=functions.length || stages.length!=ids.length) throw new IllegalStateException("Invalid property file: the same number of stages and functions is required");
+		if(stages.length!=functions.length || stages.length!=ids.length) throw new IllegalStateException("Invalid property file: the same number of stages, ids and functions is required");
 
 		//Start the stages
 		for(int i=0; i<functions.length; i++){

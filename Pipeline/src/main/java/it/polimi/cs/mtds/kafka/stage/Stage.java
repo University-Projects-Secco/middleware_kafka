@@ -1,12 +1,15 @@
 package it.polimi.cs.mtds.kafka.stage;
 
+import it.polimi.cs.mtds.kafka.stage.communication.ContentManager;
+import it.polimi.cs.mtds.kafka.stage.communication.StateManager;
+
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 
 public class Stage<Key,Input, State, Output> implements Runnable{
 
-	private final ContentManager<Key,Input,State,Output> contentManager;
+	private final ContentManager<Key,Input, State,Output> contentManager;
 
 	private final StateManager<State> stateManager;
 

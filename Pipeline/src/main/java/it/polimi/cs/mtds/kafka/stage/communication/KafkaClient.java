@@ -1,4 +1,4 @@
-package it.polimi.cs.mtds.kafka.stage;
+package it.polimi.cs.mtds.kafka.stage.communication;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -14,11 +14,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public abstract class KafkaClient<Key,Input,State,Output> implements Runnable, Closeable {
+abstract class KafkaClient<Key,Input,State,Output> implements Runnable, Closeable {
 	protected final KafkaConsumer<Key,Input> consumer;
 	protected final KafkaProducer<Key,Output> producer;
 	protected final AtomicReference<State> stateRef;
-	private final String consumerGroupId;   //TODO: wrong approach. reason more about how you update the offsets.
+	private final String consumerGroupId;
 
 	protected KafkaClient(KafkaConsumer<Key, Input> consumer, KafkaProducer<Key, Output> producer, AtomicReference<State> stateRef, String consumerGroupId) {
 		this.consumer = consumer;

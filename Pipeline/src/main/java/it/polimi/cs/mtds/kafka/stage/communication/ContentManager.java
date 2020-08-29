@@ -1,5 +1,6 @@
-package it.polimi.cs.mtds.kafka.stage;
+package it.polimi.cs.mtds.kafka.stage.communication;
 
+import it.polimi.cs.mtds.kafka.stage.Stage;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -14,7 +15,7 @@ import java.util.function.BiFunction;
 
 import static it.polimi.cs.mtds.kafka.constants.Constants.*;
 
-class ContentManager<Key,Input, State, Output> extends KafkaClient<Key,Input,State,Output> {
+public class ContentManager<Key,Input, State, Output> extends KafkaClient<Key,Input,State,Output> {
 
 	private final BiFunction<Input, AtomicReference<State>, Output> function;
 	private final String outputTopic;
