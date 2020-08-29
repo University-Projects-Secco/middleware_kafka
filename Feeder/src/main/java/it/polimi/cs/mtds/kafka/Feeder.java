@@ -16,7 +16,8 @@ public class Feeder {
 
 	public static void main(String[] args) throws IOException {
 		final Properties properties = new Properties();
-		properties.put("bootstrap.servers","localhost:9092");
+		final String bootstrap_servers = args.length>0?args[0]:"localhost:9092";
+		properties.put("bootstrap.servers",bootstrap_servers);
 		properties.put("key.serializer", StringSerializer.class);
 		properties.put("key.deserializer", StringDeserializer.class);
 		properties.put("value.serializer", StringSerializer.class);
