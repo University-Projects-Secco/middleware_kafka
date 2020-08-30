@@ -4,8 +4,11 @@ import it.polimi.cs.mtds.kafka.functions.FunctionFactory;
 import it.polimi.cs.mtds.kafka.functions.StringFunctionFactory;
 import it.polimi.cs.mtds.kafka.stage.Stage;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,10 +29,11 @@ public class PipelineRunner {
 	 */
 	public static void main(String[] args) throws IOException {
 
+		if(args.length<=0) throw new IllegalArgumentException("Specify a property file");
+
 		//Prepare properties
 		final Properties processProperties = new Properties();
-		final String propertiesName = args.length>0?args[0]: "config.properties";
-		final InputStream propertiesIn = PipelineRunner.class.getClassLoader().getResourceAsStream(propertiesName);
+		final InputStreamReader propertiesIn = new InputStreamReader(new FileInputStream(args[0]), StandardCharsets.UTF_8);
 		final FunctionFactory<String,String,String> functionFactory = new StringFunctionFactory();
 		try {
 			processProperties.load(propertiesIn);
