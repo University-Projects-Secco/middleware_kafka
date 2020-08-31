@@ -13,13 +13,11 @@ while true; do
 done
 
 cp -r "$KAFKA_PATH" "$DIRECTORY/kafka"
+cp "$PROPERTIES" "$DIRECTORY/server.properties"
 
 for (( i = 1; i <= NUMBER; i++ )); do
-  #TODO: need to change property files changing the addresses of brokers
-  #TODO: need to change docker files changing exposed ports
   docker build -t "kafka/broker$i" "$DIRECTORY"
   docker run --ip "172.0.0.$i" --name "broker$i" --rm "kafka/broker$i"
-  #bash "$KAFKA_PATH/bin/kafka-server-start.sh" "$PROPERTIES"
 done
 
 rm -r "$DIRECTORY/kafka"
