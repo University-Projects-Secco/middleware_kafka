@@ -2,7 +2,7 @@
 FROM openjdk:8-jre-alpine
 # copy WAR into image
 COPY kafka ./kafka
-COPY server.properties ./server.properties
+COPY server_template.properties ./server.properties
 # install bash
 RUN apk add --no-cache bash
 # run application with this command line

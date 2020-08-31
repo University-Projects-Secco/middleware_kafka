@@ -10,6 +10,6 @@ for properties in ./*.properties; do
     cp -r "../Pipeline" "$directory"
     cp "$properties" "$directory/config.properties"
     docker build -t "kafka/$machineName" "$directory"
-    docker run --ip "172.0.100.$machineNum" --name "$machineName" --rm "kafka/$machineName"
+    docker run -d --network 'kafka-net' --ip "client-$machineNum" --name "$machineName" "kafka/$machineName"
   fi;
 done
