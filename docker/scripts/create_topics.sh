@@ -56,11 +56,11 @@ function check_variable() {
 
 function check_brokers() {
   [[ $(bash "$KAFKA_PATH/bin/zookeeper-shell.sh" "$ZOOKEEPER" 'ls' '/brokers/ids') =~ \[(.+)\] ]]
-  split_string IDS "${BASH_REMATCH[0]}" ", "
+  split_string IDS "${BASH_REMATCH[1]}" ", "
   if [ "${#IDS[@]}" -ge $NUM_BROKERS ]; then
-    print_verbose "Using $NUM_BROKERS out of $IDS actually running"
+    print_verbose "Using $NUM_BROKERS out of ${#IDS[@]} actually running"
   else
-    error "$NUM_BROKERS brokers running but $IDS are needed"
+    error "$NUM_BROKERS brokers needed but ${#IDS[@]} are running"
   fi
 }
 
@@ -108,7 +108,7 @@ function create_properties() {
   for (( i = 0; i < "${#machines[@]}"; i++ )); do
     stages=()
     split_string stages "${machines[$i]}"
-    file="machine-$i".properties
+    file="machine$i".properties
     printf "bootstrap.servers=%s\n" "$BOOTSTRAP_SERVERS">$file
     printf "stages=%s" $(("${stages[0]}"+1))>>$file
     for stage in "${stages[@]:1}"; do
@@ -214,5 +214,3 @@ done
 
 #CREATE PROPERTY FILES
 create_properties
-
-#bash ./clear.sh &>/dev/null #clear kafka topics. for development utility
