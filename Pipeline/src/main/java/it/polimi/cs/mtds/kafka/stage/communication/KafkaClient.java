@@ -27,21 +27,17 @@ abstract class KafkaClient<Key,Input,State,Output> implements Runnable, Closeabl
 		this.consumerGroupId = consumerGroupId;
 	}
 
-	protected void updateOffsets(ConsumerRecords<Key,Input> records, Function<Long,Long> offsetUpdater){
+	protected void updateOffsets(ConsumerRecords<Key,Input> records){
 		final Map<TopicPartition,OffsetAndMetadata> offsets = records.partitions().parallelStream()
 				.collect(Collectors.toMap(Function.identity(),
 						partition->{
 							final List<ConsumerRecord<Key, Input>> recordsForPartition = records.records(partition);
 							final ConsumerRecord<Key, Input> lastRecord = recordsForPartition.get(recordsForPartition.size() - 1);
-							return new OffsetAndMetadata(offsetUpdater.apply(lastRecord.offset()));
+							return new OffsetAndMetadata(lastRecord.offset()+1);
 						}));
 
 		//add offsets to transaction
 		producer.sendOffsetsToTransaction(offsets, consumerGroupId); //Consumers of the next stage
-	}
-
-	protected void updateOffsets(ConsumerRecords<Key,Input> records){
-		updateOffsets(records,offset->offset+1);
 	}
 
 	public void commit(){

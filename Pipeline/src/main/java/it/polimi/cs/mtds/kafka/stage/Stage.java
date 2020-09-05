@@ -16,8 +16,6 @@ public class Stage<Key,Input, State, Output> implements Runnable{
 
 	private boolean running;
 
-	private static final Logger logger  = Logger.getLogger(Stage.class.getName());
-
 	public Stage(final BiFunction<Input,AtomicReference<State>,Output> function,
 	             final State initialState,
 	             final int stageNum,
@@ -28,11 +26,9 @@ public class Stage<Key,Input, State, Output> implements Runnable{
 
 		this.stateManager = StateManager.build(stateRef, stageNum, parallelUnitId,bootstrap_servers);
 
-		this.contentManager = ContentManager.build(function, stateRef, stageNum,bootstrap_servers);
+		this.contentManager = ContentManager.build(function, stateRef, stageNum, parallelUnitId,bootstrap_servers);
 
 		this.running = true;
-
-		logger.info("Created stage running function "+function);
 	}
 
 	@Override

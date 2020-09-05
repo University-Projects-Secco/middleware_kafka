@@ -74,7 +74,7 @@ echo '---------------------'
 echo
 echo
 
-sleep 3s
+sleep 5s
 
 bash create_topics.sh -z 'localhost:2181' -f "$FUNCTIONS_STRING" -r "$REPLICAS_STRING" \
       -k "$KAFKA_PATH" -R "$REPLICATION_FACTOR" -B "$BOOTSTRAP_SERVERS" "${VERBOSE+-v}" "${MACHINES+-m $MACHINES}"

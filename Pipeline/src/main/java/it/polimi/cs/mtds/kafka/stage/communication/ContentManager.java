@@ -12,6 +12,7 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
+import java.util.logging.Logger;
 
 import static it.polimi.cs.mtds.kafka.constants.Constants.*;
 
@@ -19,10 +20,12 @@ public class ContentManager<Key,Input, State, Output> extends KafkaClient<Key,In
 
 	private final BiFunction<Input, AtomicReference<State>, Output> function;
 	private final String outputTopic;
+	private static final Logger logger = Logger.getLogger(ContentManager.class.getName());
 
 	public static <Key, Input, State, Output> ContentManager<Key,Input,State,Output> build(final BiFunction<Input, AtomicReference<State>, Output> function,
 	                                                                                       final AtomicReference<State> stateRef,
 	                                                                                       final int stageNum,
+	                                                                                       final int replicaId,
 	                                                                                       final String bootstrap_servers) throws IOException{
 		final String consumerGroupId = CONSUMER_GROUP_PREFIX+stageNum;
 
@@ -37,8 +40,9 @@ public class ContentManager<Key,Input, State, Output> extends KafkaClient<Key,In
 		final Properties producerProperties = new Properties();
 		final InputStream producerPropIn = Stage.class.getClassLoader().getResourceAsStream("producer.properties");
 		producerProperties.load(producerPropIn);
-		producerProperties.put(TRANSACTIONAL_ID,PRODUCER_GROUP_PREFIX+(stageNum+1));
+		producerProperties.put(TRANSACTIONAL_ID,PRODUCER_GROUP_PREFIX+(stageNum+1)+"-"+replicaId);
 		producerProperties.put("bootstrap.servers",bootstrap_servers);
+		logger.info("Set transactional id to "+producerProperties.getProperty(TRANSACTIONAL_ID));
 
 		return new ContentManager<>(function,stateRef,stageNum, consumerGroupId, new KafkaConsumer<>(consumerProperties),new KafkaProducer<>(producerProperties));
 	}
