@@ -42,7 +42,7 @@ public class PipelineRunner {
 		}catch ( IOException e ){ throw new IOException("Cannot read property file",e); }
 
 		final String bootstrap_servers = processProperties.getProperty("bootstrap.servers");
-		logger.info("boostrap servers: "+bootstrap_servers);
+		logger.info("Loaded property file");
 
 		//Read list of stages on this process
 		final Integer[] stages = Arrays.stream(processProperties.getProperty("stages").split(","))
@@ -57,6 +57,7 @@ public class PipelineRunner {
 
 		//Safety check
 		if(stages.length!=functions.length || stages.length!=ids.length) throw new IllegalStateException("Invalid property file: the same number of stages, ids and functions is required");
+		else logger.info("Properties are ok");
 
 		//Start the stages
 		for(int i=0; i<functions.length; i++){
@@ -65,6 +66,7 @@ public class PipelineRunner {
 			PipelineRunner.stageThreads.add(stageThread);
 			PipelineRunner.stages.add(stage);
 			stageThread.start();
+			logger.info("Started new stage executing function "+functions[i]);
 		}
 
 		//Handle SIGINT
@@ -76,10 +78,10 @@ public class PipelineRunner {
 					System.err.println("ShutdownHook interrupted?");
 					return;
 				}
-			System.out.println("All stages closed");
+			logger.info("All stages closed");
 		}));
 
 		//Output correct start info
-		System.out.println("All stages running");
+		logger.info("All stages running");
 	}
 }

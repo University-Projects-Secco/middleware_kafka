@@ -6,6 +6,7 @@ import it.polimi.cs.mtds.kafka.stage.communication.StateManager;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
+import java.util.logging.Logger;
 
 public class Stage<Key,Input, State, Output> implements Runnable{
 
@@ -14,6 +15,8 @@ public class Stage<Key,Input, State, Output> implements Runnable{
 	private final StateManager<State> stateManager;
 
 	private boolean running;
+
+	private static final Logger logger  = Logger.getLogger(Stage.class.getName());
 
 	public Stage(final BiFunction<Input,AtomicReference<State>,Output> function,
 	             final State initialState,
@@ -28,6 +31,8 @@ public class Stage<Key,Input, State, Output> implements Runnable{
 		this.contentManager = ContentManager.build(function, stateRef, stageNum,bootstrap_servers);
 
 		this.running = true;
+
+		logger.info("Created stage running function "+function);
 	}
 
 	@Override
