@@ -3,7 +3,14 @@ NUM_BROKERS=2
 REPLICATION_FACTOR=2
 BOOTSTRAP_SERVERS=''
 function help() {
-    printf "check your input\n"
+  printf "Check your input. Command options are:\n"
+  printf "-f comma-separated functions executed on each stage, in stage order. Don't put spaces\n"
+  printf "-r comma-separated number of clients running for each stage. Don't put spaces\n"
+  printf "[-m preferred number of machines]\n"
+  printf "[-R topic replication factor. Higher valuer will grant higher fault tolerance. Minimum value allowed is 2. Must be integer]\n"
+  printf "[-b desired number of brokers. Default is 2. The value will automatically be raised to the maximum number of replicas for one stage if needed]\n"
+  printf "[-B comma separated list of available bootstrap servers. Don't put spaces. If not specified, they will have to be added manually to the generated properties]\n"
+  printf "[-v enable verbose output]"
 }
 function error() {
   printf "$1\n" >&2
