@@ -18,13 +18,14 @@ public class Stage<Key,Input, State, Output> implements Runnable{
 	public Stage(final BiFunction<Input,AtomicReference<State>,Output> function,
 	             final State initialState,
 	             final int stageNum,
-	             final int parallelUnitId) throws IOException {
+	             final int parallelUnitId,
+	             final String bootstrap_servers) throws IOException {
 
 		AtomicReference<State> stateRef = new AtomicReference<>(initialState);
 
-		this.stateManager = StateManager.build(stateRef, stageNum, parallelUnitId);
+		this.stateManager = StateManager.build(stateRef, stageNum, parallelUnitId,bootstrap_servers);
 
-		this.contentManager = ContentManager.build(function, stateRef, stageNum);
+		this.contentManager = ContentManager.build(function, stateRef, stageNum,bootstrap_servers);
 
 		this.running = true;
 	}

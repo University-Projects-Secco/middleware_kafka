@@ -14,6 +14,15 @@
         <module>Common</module>
     </modules>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.22</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -49,7 +58,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>../docker/${project.artifactId}/lib</outputDirectory>
+                            <outputDirectory>../docker/${project.artifactId}/libs</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

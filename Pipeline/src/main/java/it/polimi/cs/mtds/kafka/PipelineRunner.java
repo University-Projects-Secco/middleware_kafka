@@ -13,11 +13,13 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 public class PipelineRunner {
 
 	private static final List<Thread> stageThreads = new LinkedList<>();
 	private static final List<Stage<String,String,String, String>> stages = new LinkedList<>();
+	private static final Logger logger = Logger.getLogger(PipelineRunner.class.getName());
 
 	/**
 	 * Open config.properties
@@ -39,6 +41,9 @@ public class PipelineRunner {
 			processProperties.load(propertiesIn);
 		}catch ( IOException e ){ throw new IOException("Cannot read property file",e); }
 
+		final String bootstrap_servers = processProperties.getProperty("bootstrap.servers");
+		logger.info("boostrap servers: "+bootstrap_servers);
+
 		//Read list of stages on this process
 		final Integer[] stages = Arrays.stream(processProperties.getProperty("stages").split(","))
 				.map(Integer::parseInt).toArray(Integer[]::new);
@@ -55,7 +60,7 @@ public class PipelineRunner {
 
 		//Start the stages
 		for(int i=0; i<functions.length; i++){
-			final Stage<String, String, String, String> stage = new Stage<>(functionFactory.getFunction(functions[i]), "0", stages[i], ids[i]);
+			final Stage<String, String, String, String> stage = new Stage<>(functionFactory.getFunction(functions[i]), "0", stages[i], ids[i],bootstrap_servers);
 			final Thread stageThread = new Thread(stage,"Stage "+i);
 			PipelineRunner.stageThreads.add(stageThread);
 			PipelineRunner.stages.add(stage);

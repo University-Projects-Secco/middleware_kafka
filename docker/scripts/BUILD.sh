@@ -56,14 +56,27 @@ check_variable FUNCTIONS_STRING 'f'
 check_variable REPLICAS_STRING 'r'
 
 BOOTSTRAP_SERVERS+="broker1:9092"
+LISTENERS='PLAINTEXT://broker1:9092,SSL://broker1:9092'
 for (( i = 2; i <= NUM_BROKERS; i++ )); do
     BOOTSTRAP_SERVERS+=",broker$i:9092"
+    LISTENERS+=",PLAINTEXT://broker$i:9092,SSL://broker$i:9092"
 done
 
 docker network create kafka-net --driver bridge
 bash run_zookeeper.sh "$KAFKA_PATH" '../Zookeeper'
-bash run_brokers.sh "$NUM_BROKERS" "$KAFKA_PATH"
-bash create_topics.sh -z 'zookeeper' -f "$FUNCTIONS_STRING" -r "$REPLICAS_STRING" \
+bash run_brokers.sh "$NUM_BROKERS" "$KAFKA_PATH" "$LISTENERS"
+
+echo
+echo
+echo '---------------------'
+echo 'kafka infrastructure deployed'
+echo '---------------------'
+echo
+echo
+
+sleep 3s
+
+bash create_topics.sh -z 'localhost:2181' -f "$FUNCTIONS_STRING" -r "$REPLICAS_STRING" \
       -k "$KAFKA_PATH" -R "$REPLICATION_FACTOR" -B "$BOOTSTRAP_SERVERS" "${VERBOSE+-v}" "${MACHINES+-m $MACHINES}"
 
 echo

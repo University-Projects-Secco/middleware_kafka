@@ -12,16 +12,16 @@ BOOTSTRAP_SERVERS='<Replace with actual addresses>'
 
 #PRINT OPTION EXPLANATION
 function help() {
-  printf "Valid options are:\n"
-  printf "-z zookeeper address\n"
-  printf "-f comma-separated functions executed on each stage, in stage order. Don't put spaces\n"
-  printf "-r comma-separated number of clients running for each stage. Don't put spaces\n"
-  printf "[-m preferred number of machines]\n"
-  printf "[-k path to bin folder of kafka. Default is './bin']\n"
-  printf "[-R topic replication factor. Higher valuer will grant higher fault tolerance. Minimum value allowed is 2. Must be integer]\n"
-  printf "[-B comma separated list of available bootstrap servers. Don't put spaces. If not specified, they will have to be added manually to the generated properties]\n"
-  printf "[-b desired number of brokers. Default is 2. The value will automatically be raised to the maximum number of replicas for one stage if needed]\n"
-  printf "[-v enable verbose output]"
+  echo "Valid options are:\n"
+  echo "-z zookeeper address\n"
+  echo "-f comma-separated functions executed on each stage, in stage order. Don't put spaces\n"
+  echo "-r comma-separated number of clients running for each stage. Don't put spaces\n"
+  echo "[-m preferred number of machines]\n"
+  echo "[-k path to bin folder of kafka. Default is './bin']\n"
+  echo "[-R topic replication factor. Higher valuer will grant higher fault tolerance. Minimum value allowed is 2. Must be integer]\n"
+  echo "[-B comma separated list of available bootstrap servers. Don't put spaces. If not specified, they will have to be added manually to the generated properties]\n"
+  echo "[-b desired number of brokers. Default is 2. The value will automatically be raised to the maximum number of replicas for one stage if needed]\n"
+  echo "[-v enable verbose output]"
 }
 
 function error() {
@@ -191,6 +191,9 @@ check_brokers
 #END OF INPUT ELABORATION
 print_verbose ""
 
+#CREATE PROPERTY FILES
+create_properties
+
 #CREATE "SYSTEM" TOPICS
 if OUT=$(bash "$KAFKA_PATH/bin/kafka-topics.sh" --create --zookeeper "$ZOOKEEPER" --replication-factor "$REPLICATION_FACTOR" --partitions 1 --topic states \
   --config "cleanup.policy=compact" \
@@ -211,6 +214,3 @@ for (( stage = 0; stage < NUM_STAGES; stage++ )); do
     error "Failed to create topic 'topic_$stage'. Error output is:\n\t$OUT"
   fi
 done
-
-#CREATE PROPERTY FILES
-create_properties

@@ -24,7 +24,8 @@ public class StateManager<State> extends KafkaClient<String,State,State,State> {
 
 	public static <State> StateManager<State> build(final AtomicReference<State> stateRef,
 	                                                final int stageNum,
-	                                                final int parallelUnitId) throws IOException {
+	                                                final int parallelUnitId,
+	                                                final String bootstrap_servers) throws IOException {
 		final String replicaId = stageNum+"-"+parallelUnitId;
 		final String stateManagerId = STATE_GROUP_PREFIX+replicaId;
 		final String consumerGroupId = CONSUMER_GROUP_PREFIX + stateManagerId;
@@ -35,12 +36,14 @@ public class StateManager<State> extends KafkaClient<String,State,State,State> {
 		final InputStream consumerPropIn = Stage.class.getClassLoader().getResourceAsStream("state_consumer.properties");
 		consumerProperties.load(consumerPropIn);
 		consumerProperties.put(GROUP_ID, consumerGroupId);
+		consumerProperties.put("bootstrap.servers",bootstrap_servers);
 
 		//Configure producer
 		final Properties producerProperties = new Properties();
 		final InputStream producerPropIn = Stage.class.getClassLoader().getResourceAsStream("state_producer.properties");
 		producerProperties.load(producerPropIn);
 		producerProperties.put(TRANSACTIONAL_ID,producerTransactionalId);
+		producerProperties.put("bootstrap.servers",bootstrap_servers);
 
 		return new StateManager<>(stateRef,
 				replicaId,

@@ -22,7 +22,8 @@ public class ContentManager<Key,Input, State, Output> extends KafkaClient<Key,In
 
 	public static <Key, Input, State, Output> ContentManager<Key,Input,State,Output> build(final BiFunction<Input, AtomicReference<State>, Output> function,
 	                                                                                       final AtomicReference<State> stateRef,
-	                                                                                       final int stageNum) throws IOException{
+	                                                                                       final int stageNum,
+	                                                                                       final String bootstrap_servers) throws IOException{
 		final String consumerGroupId = CONSUMER_GROUP_PREFIX+stageNum;
 
 		//Configure consumer
@@ -30,12 +31,14 @@ public class ContentManager<Key,Input, State, Output> extends KafkaClient<Key,In
 		final InputStream consumerPropIn = Stage.class.getClassLoader().getResourceAsStream("consumer.properties");
 		consumerProperties.load(consumerPropIn);
 		consumerProperties.put(GROUP_ID,consumerGroupId);
+		consumerProperties.put("bootstrap.servers",bootstrap_servers);
 
 		//Configure producer
 		final Properties producerProperties = new Properties();
 		final InputStream producerPropIn = Stage.class.getClassLoader().getResourceAsStream("producer.properties");
 		producerProperties.load(producerPropIn);
 		producerProperties.put(TRANSACTIONAL_ID,PRODUCER_GROUP_PREFIX+(stageNum+1));
+		producerProperties.put("bootstrap.servers",bootstrap_servers);
 
 		return new ContentManager<>(function,stateRef,stageNum, consumerGroupId, new KafkaConsumer<>(consumerProperties),new KafkaProducer<>(producerProperties));
 	}
