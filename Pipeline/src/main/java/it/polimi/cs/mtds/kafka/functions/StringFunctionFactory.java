@@ -20,6 +20,8 @@ public final class StringFunctionFactory implements FunctionFactory<String,Strin
 				return (string,state)->String.valueOf(Integer.parseInt(string)*2);
 			case "int:half":
 				return (string,state)->String.valueOf(Integer.parseInt(string)/2);
+			case "int:add_state":
+				return (string, state)->String.valueOf(Integer.parseInt(string)+Integer.parseInt(state.getAndAccumulate("1",(st,inc)-> String.valueOf(Integer.parseInt(st)+Integer.parseInt(inc)))+" "+string));
 			case "string:print":
 				return (string,state)->{
 					System.out.println(state.getAndAccumulate("1",(st,inc)-> String.valueOf(Integer.parseInt(st)+Integer.parseInt(inc)))+" "+string);
