@@ -6,8 +6,10 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Properties;
@@ -16,8 +18,11 @@ public class Feeder {
 
 	public static void main(String[] args) throws IOException {
 		final Properties properties = new Properties();
-		final String bootstrap_servers = args.length>0?args[0]:"localhost:9092";
-		properties.put("bootstrap.servers",bootstrap_servers);
+		final String propFile = args.length>0?args[0]:"config.properties";
+		final InputStreamReader propertiesIn = new InputStreamReader(new FileInputStream(propFile), StandardCharsets.UTF_8);
+		try {
+			properties.load(propertiesIn);
+		}catch ( IOException e ){ throw new IOException("Cannot read property file",e); }
 		properties.put("key.serializer", StringSerializer.class);
 		properties.put("key.deserializer", StringDeserializer.class);
 		properties.put("value.serializer", StringSerializer.class);
