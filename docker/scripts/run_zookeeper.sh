@@ -3,5 +3,5 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 DIRECTORY="$SCRIPT_DIR/../Zookeeper/"
 cp -R "$KAFKA_PATH" "$DIRECTORY/kafka/"
 docker build -t "kafka/zookeeper" "$DIRECTORY"
-docker run -d --name 'zookeeper' --network 'kafka-net' --ip 'zookeeper' "kafka/zookeeper"
-rm -r "$DIRECTORY/kafka"
+docker run -d --rm -p 2181:2181 --name 'zookeeper' --network 'kafka-net' "kafka/zookeeper"
+rm -r "$DIRECTORY/kafka" &

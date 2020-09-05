@@ -6,4 +6,4 @@ COPY kafka ./kafka
 RUN apk add --no-cache bash
 # run application with this command line
 CMD ["/bin/bash", "./kafka/bin/zookeeper-server-start.sh", "./kafka/config/zookeeper.properties"]
-EXPOSE 2181
+EXPOSE 2181 2888 3888
