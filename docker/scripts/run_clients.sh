@@ -8,7 +8,7 @@ for properties in ./*.properties; do
     machineName=$(echo "$fileName" | cut -f 1 -d '.')
     mv "$properties" "$directory/config.properties"
     docker build -t "kafka/$machineName" "$directory"
-    docker run -d --network 'kafka-net' --name "$machineName" "kafka/$machineName"
+    docker run -d --rm --network 'kafka-net' --name "$machineName" "kafka/$machineName"
   fi;
 done
 rm "$directory/config.properties"

@@ -65,10 +65,11 @@ function check_brokers() {
 }
 
 function check_machines() {
+  echo "$MACHINES"
   if [ "$MACHINES" -gt 0 ] && [ "$MACHINES" -lt "$OPTIMAL_MACHINES" ]; then
     while true; do
       printf "A number of %d machines is suggested for this configuration.\n" "$OPTIMAL_MACHINES"
-      printf "A number of %d machines has been provided." "$MACHINES"
+      printf "A number of %d machines has been provided.\n" "$MACHINES"
       printf "Continue with the (p)rovided number of machines, with the (o)ptimal number, or (a)bort?\n"
       # shellcheck disable=SC2162
       read OPTION
@@ -134,7 +135,7 @@ while getopts :z:f:r:m:k:R:b:B:v option; do
   z) ZOOKEEPER=${OPTARG} ;;
   f) FUNCTIONS_STRING=${OPTARG} ;;
   r) REPLICAS_STRING=${OPTARG} ;;
-  m) MACHINES=${OPTARG} ;;
+  m) MACHINES=${OPTARG};;
   k) KAFKA_PATH=${OPTARG} ;;
   R)
     REPLICATION_FACTOR=${OPTARG}

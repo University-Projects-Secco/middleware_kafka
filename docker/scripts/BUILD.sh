@@ -2,6 +2,7 @@ KAFKA_PATH='/home/matteo/University/Middleware_technologies_for_distributed_syst
 NUM_BROKERS=2
 REPLICATION_FACTOR=2
 BOOTSTRAP_SERVERS=''
+MACHINES=0
 function help() {
   printf "Check your input. Command options are:\n"
   printf "-f comma-separated functions executed on each stage, in stage order. Don't put spaces\n"
@@ -34,7 +35,7 @@ while getopts :k:f:r:m:R:b:B:v option; do
   k) KAFKA_PATH=${OPTARG} ;;
   f) FUNCTIONS_STRING=${OPTARG} ;;
   r) REPLICAS_STRING=${OPTARG} ;;
-  m) MACHINES=${OPTARG} ;;
+  m) MACHINES=${OPTARG};;
   R)
     REPLICATION_FACTOR=${OPTARG}
     check_int "$REPLICATION_FACTOR" 'Replication factor'
@@ -77,7 +78,7 @@ echo
 sleep 5s
 
 bash create_topics.sh -z 'localhost:2181' -f "$FUNCTIONS_STRING" -r "$REPLICAS_STRING" \
-      -k "$KAFKA_PATH" -R "$REPLICATION_FACTOR" -B "$BOOTSTRAP_SERVERS" "${VERBOSE+-v}" "${MACHINES+-m $MACHINES}"
+      -k "$KAFKA_PATH" -R "$REPLICATION_FACTOR" -B "$BOOTSTRAP_SERVERS" -m "$MACHINES" "${VERBOSE+-v}"
 
 echo
 echo
