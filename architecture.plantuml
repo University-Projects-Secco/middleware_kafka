@@ -1,0 +1,71 @@
+@startuml
+
+database States
+actor Feeder
+database Topic1
+collections Stage1
+database Topic2
+collections Stage2
+database Topic3
+control Kafka
+
+activate Kafka
+activate Stage1
+activate Stage2
+
+== Initialization ==
+
+Feeder -> Topic1: message 1
+group message elaboration
+	group transaction
+		Topic1 o-> Stage1: message 1-1
+		activate Stage1
+		Stage1 --> Stage1: State change
+		Stage1 -> Topic2: message 1-2
+		Stage1 -> States: Save state
+		deactivate Stage1
+		Stage1 -[#green]->Kafka: <font color=green>commit
+	end
+	Kafka -[#grey]-> Topic1: <font color=grey>Offset: 2-1
+else fail to pool
+	|||
+	group transaction
+		Topic1 --x Stage1: message 1-1
+		note right #aqua: Pool with no results
+		Stage1 --> States: Save state
+		note left #aqua:unchanged
+		Stage1 -[#green]-> Kafka: <font color=green>commit
+	end
+	Kafka -[#grey]-> Topic1: <font color=grey>Offset: 1-1
+	note right #aqua: no message read
+	|||
+else fail elaboration
+	group transaction
+		Topic1 o-> Stage1: message 1-1
+		hnote over Stage1 #red: fail
+		Stage1 -[hidden]-> Stage1
+		destroy Stage1
+		... Transaction timeout ...
+		Stage1 -[#red]-> Kafka: <font color=red>timeout
+	end
+	Kafka -[#grey]-> Kafka: <font color=grey>rebalance stage 1
+	activate Kafka
+	Kafka -[#grey]-> Stage1: <font color=grey>Assign to another replica
+	deactivate Kafka
+	Kafka -[#grey]-> Stage1: <font color=grey>Offset 1-1
+	activate Stage1
+	Topic1 o-> Stage1:message 1-1
+	|||
+end
+== Process other messages ==
+group transaction
+|||
+Topic2 o-> Stage2: message 1-2
+activate Stage2
+Stage2 --> Stage2: State change
+Stage2 -> Topic3: message 1-3
+Stage2 --> States: Save state
+Stage2 -[#green]-> Kafka: <font color=green>commit
+end
+
+@enduml
